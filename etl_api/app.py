@@ -10,8 +10,8 @@ def get_db_connection():
     return psycopg2.connect(
         dbname="etl_db",
         user="postgres",
-        password="your_password",  # Replace with your actual password
-        host="postgres_db",  # Docker Compose service name
+        password="your_password",  # 🔴 Replace with the correct password
+        host="postgres_db",  # ✅ Docker service name (must match docker-compose)
         port="5432"
     )
 
