@@ -1,0 +1,4 @@
+flask
+neo4j
+psycopg2
+pandas

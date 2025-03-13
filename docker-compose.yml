@@ -1,0 +1,53 @@
+services:
+  neo4j:
+    image: neo4j:latest
+    container_name: neo4j_db
+    restart: always
+    environment:
+      - NEO4J_AUTH=none # Desactiva autenticación
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4j_data:/data
+    networks:
+      - etl_network  # Agregar el servicio a la red
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres_db
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - etl_network  # Agregar el servicio a la red
+
+  etl_api:
+    build: ./etl_api
+    container_name: etl_api
+    restart: always
+    environment:
+      - NEO4J_USER=${NEO4J_USER}
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "5000:5000"
+    depends_on:
+      - neo4j
+      - postgres
+    networks:
+      - etl_network  # Agregar el servicio a la red
+
+volumes:
+  neo4j_data:
+  pg_data:
+
+networks:
+  etl_network:
+    driver: bridge
